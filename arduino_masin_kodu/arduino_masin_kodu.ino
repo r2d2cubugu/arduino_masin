@@ -1,5 +1,3 @@
-// #include <QTRSensors.h>
-
 // Qirmizi en yaxin 100
 // 10sm, ucun 220
 
@@ -13,6 +11,8 @@
 //10sm GRE 700-800 arasi
 //Yaxinda 200 220
 
+
+//Motorlar ve sensorlari tanidiriq
 #define S1 A5
 #define S0 8
 #define S3 A2
@@ -29,12 +29,8 @@
 #define DS2 5
 #define DS3 6
 
-// // QTRSensors qtr;
-// const uint8_t SensorCount = 1;
-// uint16_t sensorValues[SensorCount];
 
-// int blue = 140;
-// int white = 0;
+//Rengleri tanidiriq
 int redFrequency = 0;
 int greenFrequency = 0;
 int blueFrequency = 0;
@@ -46,11 +42,8 @@ int nofilterColor = 0;
 int Round = 0;
 // int blueFrequency = 0;
 void setup() {
-  // put your setup code here, to run once:
-  // qtr.setTypeAnalog();
-  // qtr.setSensorPins((const uint8_t[]){ A0 }, 1);
-  // qtr.setEmitterPin(1);
-  // pinMode(yer, INPUT_PULLUP);
+  
+  //pinmodlari teyin edirik
   pinMode(S0, OUTPUT);
   pinMode(S1, OUTPUT);
   pinMode(S2, OUTPUT);
@@ -58,8 +51,6 @@ void setup() {
   pinMode(DS1, INPUT_PULLUP);
   pinMode(DS2, INPUT_PULLUP);
   pinMode(DS3, INPUT_PULLUP);
-
-  // Setting the sensorOut as an input
   pinMode(sensorOut, INPUT);
   pinMode(solpwm1, OUTPUT);
   pinMode(solpwm2, OUTPUT);
@@ -78,6 +69,7 @@ int donmeistiqameti = 0;  //0 olanda sola dönür 1 olanda sağa dönür
 int donmevaxti = 200;
 
 void loop() {
+  //switch ayarlari
   if (digitalRead(DS1) == 1 && digitalRead(DS2) == 1) {
     donmeistiqameti = 0;
   } else if (digitalRead(DS1) == 0 && digitalRead(DS2) == 0) {
@@ -89,6 +81,8 @@ void loop() {
   } else {
     Round = 2;
   }
+
+  //Deyeylerin komputere yollanmasi
   digitalWrite(S2, LOW);
   digitalWrite(S3, LOW);
 
@@ -134,15 +128,16 @@ void loop() {
   // Reading the output frequency
 
 
-
+//Robotun ise dusmesi
   get(100, 100);
   if (digitalRead(onsensor) == LOW) {
+    //Borderin sesnroun onune cixilmasi veziyetinde
     if(blueColor > redColor && blueColor > greenColor){
-    // if(round==1){
     Serial.print(" Gorur ");
 
     get(-80, 100);
 
+      //switch veziyetine baxir
     if (donmeistiqameti == 0) {
       Sagadon(300);
       
@@ -157,10 +152,10 @@ get(100,100);
       Soladon(900);
     }
 get(100,100);}
-    // }
-    // else if(round==2){
+    //Qarsisinda qirmizi mane varsa
     else if (redColor > greenColor && blueColor > redColor) {
       Sagadon(400);
+      //Qarsisinda yasil mane varsa:
     } else if (greenColor > redColor && blueColor > greenColor) {
         Soladon(1200);
       // }
@@ -175,7 +170,8 @@ get(100,100);}
       Sagadon(1000);
     }
   }
-  //Y ve B
+
+  //Yan sensorlara gore istiqamet teyin edir
   if (digitalRead(solsensor) == LOW && digitalRead(sagsensor) == LOW) {
     get(-50, 1);
     if (donmeistiqameti == 0) {
@@ -187,30 +183,31 @@ get(100,100);}
     }
     get(100, 100);
 
+    //Sol sensorun yolladigi informasiyaya qarsi hereket:
   } else if (digitalRead(solsensor) == LOW) {
     Sagadon(donmevaxti);
     get(50, 1);
-
+    //Sag sensorun yolladigi informasiyaya qarsi hereket:
   } else if (digitalRead(sagsensor) == LOW) {
     Soladon(donmevaxti);
     get(50, 1);
   }
 }
 
-void Soladon(int time) {
+void Soladon(int time) { //Sola donme funksiyasi
   don(-35, 150);
   don(0, time);
   don(35, 75);
   don(0, 1);
 }
 
-void Sagadon(int time) {
+void Sagadon(int time) { //Saga donme funksiyasi
   don(35, 150);
   don(0, time);
   don(-35, 75);
   don(0, 1);
 }
-void get(float suret, int timex) {
+void get(float suret, int timex) { //ireli getme funksiyasi
   suret = suret * 2.5;
   if (suret >= 0) {
     analogWrite(sagpwm1, suret);
@@ -222,7 +219,7 @@ void get(float suret, int timex) {
   }
   delay(timex);
 }
-void don(float suret, int timex) {
+void don(float suret, int timex) { //Donme funksiyasi
   suret = suret * 2.5;
 
   if (suret >= 0) {
